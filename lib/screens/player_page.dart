@@ -1,4 +1,5 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../global.dart';
@@ -127,7 +128,57 @@ class _PlayerPageState extends State<PlayerPage> {
                 IconButton(
                   iconSize: 25,
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    showModalBottomSheet(
+                      context: context,
+                      backgroundColor: Colors.black.withOpacity(0.95),
+                      shape: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.amber),
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(25),
+                          topLeft: Radius.circular(25),
+                        ),
+                      ),
+                      builder: (context) {
+                        return ListView.builder(
+                          itemCount: Global.songs.length,
+                          itemBuilder: (context, i) => Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 25),
+                            decoration: const BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(color: Colors.amber),
+                              ),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 7),
+                            child: ListTile(
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                setState(() {
+                                  Global.playSong["player"].pause();
+                                  Global.index = i;
+                                  Global.playSong = Global.songs[i];
+                                });
+                                Navigator.of(context)
+                                    .pushReplacementNamed("player_page");
+                              },
+                              leading: Image.network(
+                                "${Global.songs[i]["image"]}",
+                              ),
+                              title: SizedBox(
+                                height: 20,
+                                child: Text(
+                                  "${Global.songs[i]["name"]}",
+                                  style: TextStyle(
+                                    color: (Global.songs[i] == Global.playSong)
+                                        ? Colors.amber
+                                        : Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    );
                   },
                   icon: const Icon(
                     Icons.filter_list,
